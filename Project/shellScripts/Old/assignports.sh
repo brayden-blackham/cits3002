@@ -16,12 +16,7 @@ PATH="/bin:/usr/bin"
 
 TMPA="/tmp/ap-a$$"
 TMPB="/tmp/ap-b$$"
-
-function cleanup() {
-    rm -f $TMPA $TMPB
-}
-
-trap "cleanup ; exit 1" SIGINT SIGTERM
+trap "rm -f $TMPA $TMPB ; exit 1" SIGINT SIGTERM
 
 function find_ports_in_use() {
     case `uname` in
@@ -68,9 +63,10 @@ expand < $1 | sed -e 's/^ *//' | tr -s ' ' | grep '^[A-Za-z]' > $TMPB
 build_sed
 eval $SED < $TMPB > $2
 
+echo "input file '$1' - "
+cat < $1
+echo
 echo "output file '$2' - "
 cat < $2
-chmod +x $2
 
-cleanup
-exit 0
+rm -f $TMPA $TMPB
